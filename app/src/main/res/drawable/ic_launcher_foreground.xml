@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Simple "day dot progress" mark: a filled circle with three trailing
+         dots, echoing the home screen's progress-dots motif. -->
+    <path android:fillColor="#4C8DFF" android:pathData="M54,34 m-15,0 a15,15 0,1 1,30 0 a15,15 0,1 1,-30 0" />
+    <path android:fillColor="#4C8DFF" android:pathData="M40,66 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0" />
+    <path android:fillColor="#4C8DFF" android:pathData="M54,72 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0" />
+    <path android:fillColor="#3A3A40" android:pathData="M68,66 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0" />
+</vector>
