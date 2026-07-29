@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 
 /**
  * «Сдвиг» — Мимика's screen-to-screen transition, matching Letify's push
@@ -32,7 +33,7 @@ import androidx.compose.ui.Modifier
 
 private val ShiftEasing = CubicBezierEasing(0.32f, 0.72f, 0.0f, 1.0f)
 private const val ShiftDurationMs = 360
-private val ShiftSpec = tween<Int>(ShiftDurationMs, easing = ShiftEasing)
+private val ShiftSpec = tween<IntOffset>(ShiftDurationMs, easing = ShiftEasing)
 
 /** Route stack for the app's single, shallow navigation graph. */
 sealed interface Route {
