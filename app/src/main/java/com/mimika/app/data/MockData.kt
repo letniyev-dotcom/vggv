@@ -72,7 +72,7 @@ object MockRepo {
     val timeline = listOf(
         TimelineTask("08:00", "Зарядка", TaskState.DONE),
         TimelineTask(
-            "09:30", "Глубокая работа", TaskState.LIVE,
+            "09:30 – 11:00", "Глубокая работа", TaskState.LIVE,
             subTasks = listOf(
                 SubTask("Написать модуль", done = true),
                 SubTask("Ревью PR", done = false),

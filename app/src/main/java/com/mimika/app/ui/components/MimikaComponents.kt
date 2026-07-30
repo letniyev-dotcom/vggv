@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -290,6 +291,243 @@ private fun CheckCircle(done: Boolean, live: Boolean, small: Boolean = false) {
                     CircleShape,
                 ),
         )
+    }
+}
+
+/**
+ * The current/live task's rounded card — the ONLY card container on the
+ * Plan page, matching Letify's `WCard` treatment for the one thing that
+ * deserves visual weight right now. Everything else on the page stays a
+ * plain hairline-separated row.
+ */
+@Composable
+fun NowTaskCard(
+    timeRange: String,
+    name: String,
+    subTasks: List<SubTask>,
+    onToggleSub: (Int) -> Unit,
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Mimika.colors.cardBg)
+            .border(1.dp, Mimika.colors.cardBorder, RoundedCornerShape(24.dp)),
+    ) {
+        // Accent edge, matching the concept's left accent bar.
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .fillMaxHeight()
+                .background(Mimika.colors.accent),
+        )
+        Column(modifier = Modifier.padding(start = 21.dp, top = 18.dp, end = 18.dp, bottom = 16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(999.dp))
+                        .background(Mimika.colors.accentDim)
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    Text(timeRange, style = Mimika.typography.small, color = Mimika.colors.accent)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(Mimika.colors.accent),
+                    )
+                    Text("идёт сейчас", style = Mimika.typography.small, color = Mimika.colors.accent)
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            Text(name, style = Mimika.typography.cardTitle, color = Mimika.colors.text)
+            if (subTasks.isNotEmpty()) {
+                Spacer(Modifier.height(14.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    subTasks.forEachIndexed { i, sub ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(
+                                    interactionSource = noRippleSource(),
+                                    indication = null,
+                                    onClick = { onToggleSub(i) },
+                                ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
+                            CheckCircle(done = sub.done, live = false, small = true)
+                            Text(
+                                sub.name,
+                                style = Mimika.typography.bodyMedium,
+                                color = if (sub.done) Mimika.colors.muted else Mimika.colors.text,
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Mimika.colors.accent)
+                    .clickable(
+                        interactionSource = noRippleSource(),
+                        indication = null,
+                        onClick = onComplete,
+                    )
+                    .padding(vertical = 13.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("Отметить выполненной", style = Mimika.typography.bodyMedium, color = Mimika.colors.bg)
+            }
+        }
+    }
+}
+
+/** A plain, non-live timeline row for the Plan page's "Дальше" list. */
+@Composable
+fun PlainTaskRow(time: String, name: String, done: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = noRippleSource(),
+                indication = null,
+                onClick = onToggle,
+            )
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(11.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(7.dp)
+                .clip(CircleShape)
+                .background(Mimika.colors.mutedDim),
+        )
+        Text(
+            time,
+            style = Mimika.typography.tiny,
+            color = if (done) Mimika.colors.mutedDim else Mimika.colors.muted,
+            modifier = Modifier.width(42.dp),
+        )
+        Text(
+            name,
+            style = Mimika.typography.body,
+            color = if (done) Mimika.colors.muted else Mimika.colors.text,
+            modifier = Modifier.weight(1f),
+        )
+        CheckCircle(done = done, live = false)
+    }
+}
+
+/**
+ * Habits page card — softer, more generous than the old compact home-screen
+ * row: rounded container, bigger week squares, a pill-shaped streak badge.
+ * Used only on the dedicated Habits page (swipe from Plan), never on Plan.
+ */
+@Composable
+fun HabitCard(
+    name: String,
+    streakLabel: String,
+    week: List<WeekMark>,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(Mimika.colors.cardBgSoft)
+            .border(1.dp, Mimika.colors.cardBorder, RoundedCornerShape(20.dp))
+            .clickable(
+                interactionSource = noRippleSource(),
+                indication = null,
+                onClick = onClick,
+            )
+            .padding(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(name, style = Mimika.typography.body, color = Mimika.colors.text)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(Mimika.colors.accentDim)
+                    .padding(horizontal = 9.dp, vertical = 4.dp),
+            ) {
+                Text("🔥 $streakLabel", style = Mimika.typography.small, color = Mimika.colors.accent)
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            week.forEach { mark ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(if (mark.done) Mimika.colors.accent else Mimika.colors.squareOff)
+                        .border(
+                            if (mark.isToday) 1.6.dp else 1.dp,
+                            when {
+                                mark.isToday -> Mimika.colors.text
+                                mark.done -> Mimika.colors.accent
+                                else -> Mimika.colors.squareBorder
+                            },
+                            RoundedCornerShape(7.dp),
+                        ),
+                )
+            }
+        }
+    }
+}
+
+/** Two-tab pager header ("План" / "Привычки") synced with a PagerState. */
+@Composable
+fun PlanHabitsTabs(
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val titles = listOf("План", "Привычки")
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        titles.forEachIndexed { i, title ->
+            val selected = i == selectedIndex
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(if (selected) Color(0x14FFFFFF) else Color.Transparent)
+                    .clickable(
+                        interactionSource = noRippleSource(),
+                        indication = null,
+                        onClick = { onSelect(i) },
+                    )
+                    .padding(horizontal = 13.dp, vertical = 7.dp),
+            ) {
+                Text(
+                    title,
+                    style = Mimika.typography.tab,
+                    color = if (selected) Mimika.colors.text else Mimika.colors.mutedDim,
+                )
+            }
+        }
     }
 }
 
